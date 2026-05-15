@@ -16,12 +16,34 @@ export function startGlobalStream() {
   }, 2000);
 }
 
-// Simulates the 7-step analysis pipeline
-export function simulateAnalysis(text) {
+// Calls the real FastAPI backend but preserves the 7-step analysis pipeline visualization
+export async function simulateAnalysis(text) {
   currentAnalysisState.value = 'scanning';
   currentAnalysisProgress.value = 0;
   analysisResults.value = null;
   
+  let backendData = null;
+  
+  // 1. Fire off the backend request immediately
+  try {
+    const response = await fetch('http://localhost:8000/api/analyze', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ text })
+    });
+    
+    if (response.ok) {
+      backendData = await response.json();
+    } else {
+      console.error("Backend error:", response.statusText);
+    }
+  } catch (error) {
+    console.error("Failed to connect to backend:", error);
+  }
+
+  // 2. Visual Pipeline Animation
   const steps = [
     { msg: "Normalizing content payload...", delay: 800 },
     { msg: "Agent 1 (Emotion): Analyzing sentiment and emotional triggers...", delay: 1500 },
@@ -45,25 +67,31 @@ export function simulateAnalysis(text) {
     }, totalDelay);
   });
 
-  // Finish scan
+  // Finish scan and show real backend results
   setTimeout(() => {
     addLog("SCAN COMPLETE.", "success");
     currentAnalysisState.value = 'complete';
     
-    // Generate mock results based on text length/randomness
-    analysisResults.value = {
-      overallScore: 78,
-      severity: 'high',
-      radarData: [85, 90, 60, 40, 20, 75],
-      detectedTechniques: [
-        "Fear Amplification",
-        "False Urgency",
-        "Authority Bias Exploitation"
-      ],
-      highlights: [
-        { text: "If you don't act immediately,", explanation: "Creates false urgency to bypass logical evaluation.", type: "urgency" },
-        { text: "your entire account will be permanently deleted.", explanation: "Fear amplification designed to trigger panic response.", type: "fear" }
-      ]
-    };
+    if (backendData) {
+      // Use real backend data
+      analysisResults.value = backendData;
+    } else {
+      // Fallback if backend is offline
+      addLog("BACKEND OFFLINE. Using fallback data.", "error");
+      analysisResults.value = {
+        overallScore: 78,
+        severity: 'high',
+        radarData: [85, 90, 60, 40, 20, 75],
+        detectedTechniques: [
+          "Fear Amplification",
+          "False Urgency",
+          "Authority Bias Exploitation"
+        ],
+        highlights: [
+          { text: "If you don't act immediately,", explanation: "Creates false urgency to bypass logical evaluation.", type: "urgency" },
+          { text: "your entire account will be permanently deleted.", explanation: "Fear amplification designed to trigger panic response.", type: "fear" }
+        ]
+      };
+    }
   }, totalDelay + 500);
 }
