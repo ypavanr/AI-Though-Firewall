@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from gateway.routes import router as gateway_router
+from misinformation_agent.routes import router as misinformation_router
 
 app = FastAPI(title="AI Firewall Backend")
 
@@ -15,6 +16,9 @@ app.add_middleware(
 
 # Include the Gateway routes
 app.include_router(gateway_router, prefix="/api")
+
+# Include the Misinformation Agent routes
+app.include_router(misinformation_router, prefix="/api/misinformation", tags=["misinformation"])
 
 if __name__ == "__main__":
     import uvicorn
