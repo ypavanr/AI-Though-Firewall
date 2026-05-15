@@ -11,6 +11,7 @@ export const currentAnalysisState = signal('idle'); // idle, scanning, complete
 export const currentAnalysisProgress = signal(0);
 export const analysisLogs = signal([]);
 export const analysisResults = signal(null);
+export const factCheckResults = signal(null);
 
 export const addLog = (message, type = '') => {
   analysisLogs.value = [...analysisLogs.value, { time: new Date().toLocaleTimeString(), message, type }];

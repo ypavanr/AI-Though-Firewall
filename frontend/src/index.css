@@ -1,18 +1,20 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
 
 @theme {
-  --color-cyber-blue: #00f0ff;
+  --color-cyber-blue: #00e5ff;
   --color-cyber-cyan: #06b6d4;
-  --color-cyber-purple: #a855f7;
-  --color-cyber-warning: #f97316;
-  --color-cyber-danger: #ef4444;
-  --color-cyber-success: #22c55e;
-  --color-surface: rgba(15, 23, 42, 0.7);
-  --color-surface-hover: rgba(30, 41, 59, 0.8);
+  --color-cyber-purple: #b000ff;
+  --color-cyber-warning: #ff8c00;
+  --color-cyber-danger: #ff003c;
+  --color-cyber-success: #00ffa2;
+  --color-surface: rgba(10, 10, 15, 0.6);
+  --color-surface-hover: rgba(20, 20, 30, 0.8);
   
   --animate-shimmer: shimmer 2s linear infinite;
   --animate-float: float 6s ease-in-out infinite;
   --animate-scan: scan 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-pulse-glow: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 @layer base {
@@ -20,22 +22,31 @@
     color-scheme: dark;
   }
   body {
-    @apply bg-slate-950 text-slate-200;
-    font-family: 'Inter', system-ui, sans-serif;
+    /* Abyssal dark premium background */
+    @apply bg-[#05050A] text-slate-200;
+    font-family: 'Space Grotesk', system-ui, sans-serif;
     overflow-x: hidden;
+    
+    /* Subtle radial gradient to give depth to the dark background */
+    background-image: radial-gradient(circle at 50% -20%, rgba(0, 229, 255, 0.05), rgba(5, 5, 10, 1) 70%);
   }
 }
 
 @layer utilities {
   .glass-panel {
-    @apply bg-slate-900/60 backdrop-blur-md border border-slate-700/50 shadow-xl;
+    @apply bg-[#0f0f15]/50 backdrop-blur-xl border border-white/5 shadow-2xl;
+    /* Optional: very subtle noise overlay for premium feel */
+    background-image: linear-gradient(rgba(255, 255, 255, 0.01), rgba(255, 255, 255, 0));
+  }
+  .glass-panel:hover {
+    @apply border-white/10 bg-[#151520]/60;
   }
   .neon-text {
     text-shadow: 0 0 10px var(--color-cyber-blue), 0 0 20px var(--color-cyber-blue);
   }
   .neon-border {
-    box-shadow: 0 0 10px var(--color-cyber-blue) inset, 0 0 10px var(--color-cyber-blue);
-    border-color: var(--color-cyber-blue);
+    box-shadow: 0 0 15px rgba(0, 229, 255, 0.3) inset, 0 0 15px rgba(0, 229, 255, 0.3);
+    border-color: rgba(0, 229, 255, 0.5);
   }
   .scrollbar-hide {
     -ms-overflow-style: none;
@@ -53,7 +64,7 @@
 
 @keyframes float {
   0% { transform: translateY(0px); }
-  50% { transform: translateY(-20px); }
+  50% { transform: translateY(-10px); }
   100% { transform: translateY(0px); }
 }
 
@@ -61,4 +72,9 @@
   0% { transform: translateY(-100%); opacity: 0; }
   50% { opacity: 1; }
   100% { transform: translateY(100%); opacity: 0; }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 1; filter: brightness(1); }
+  50% { opacity: 0.8; filter: brightness(1.2); }
 }

@@ -1,4 +1,4 @@
-import { globalRiskScore, activeThreatsCount, scannedItemsCount, addLog, currentAnalysisState, currentAnalysisProgress, analysisResults } from '../state/appState';
+import { globalRiskScore, activeThreatsCount, scannedItemsCount, addLog, currentAnalysisState, currentAnalysisProgress, analysisResults, factCheckResults } from '../state/appState';
 
 // Simulates a live data stream updating global stats periodically
 export function startGlobalStream() {
@@ -21,23 +21,33 @@ export async function simulateAnalysis(text) {
   currentAnalysisState.value = 'scanning';
   currentAnalysisProgress.value = 0;
   analysisResults.value = null;
+  factCheckResults.value = null;
   
   let backendData = null;
+  let factCheckData = null;
   
-  // 1. Fire off the backend request immediately
+  // 1. Fire off the backend requests concurrently
   try {
-    const response = await fetch('http://localhost:8000/api/analyze', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ text })
-    });
+    const [analyzeRes, factCheckRes] = await Promise.all([
+      fetch('http://localhost:8000/api/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text })
+      }),
+      // We send the first 100 chars as query to Google Fact Check to avoid too-long-query errors
+      fetch(`http://localhost:8000/api/misinformation/factcheck?query=${encodeURIComponent(text.substring(0, 100))}`)
+    ]);
     
-    if (response.ok) {
-      backendData = await response.json();
+    if (analyzeRes.ok) {
+      backendData = await analyzeRes.json();
     } else {
-      console.error("Backend error:", response.statusText);
+      console.error("Backend error:", analyzeRes.statusText);
+    }
+
+    if (factCheckRes.ok) {
+      factCheckData = await factCheckRes.json();
+    } else {
+      console.error("Fact Check error:", factCheckRes.statusText);
     }
   } catch (error) {
     console.error("Failed to connect to backend:", error);
@@ -47,7 +57,7 @@ export async function simulateAnalysis(text) {
   const steps = [
     { msg: "Normalizing content payload...", delay: 800 },
     { msg: "Agent 1 (Emotion): Analyzing sentiment and emotional triggers...", delay: 1500 },
-    { msg: "Agent 2 (FactCheck): Cross-referencing claims with knowledge base...", delay: 2000 },
+    { msg: "Agent 2 (FactCheck): Cross-referencing claims with Google Fact Check API...", delay: 2000 },
     { msg: "Agent 3 (Bias): Detecting framing and cognitive bias patterns...", delay: 1200 },
     { msg: "Agent 4 (SocialEng): Scanning for phishing, urgency, and compliance triggers...", delay: 1800 },
     { msg: "Agent 5 (Consensus): Aggregating agent signals and determining threat vector...", delay: 1000 },
@@ -72,6 +82,13 @@ export async function simulateAnalysis(text) {
     addLog("SCAN COMPLETE.", "success");
     currentAnalysisState.value = 'complete';
     
+    // Set Fact Check Results
+    if (factCheckData && factCheckData.claims) {
+      factCheckResults.value = factCheckData.claims;
+    } else {
+      factCheckResults.value = []; // empty array means no claims found or error
+    }
+
     if (backendData) {
       // Use real backend data
       analysisResults.value = backendData;
