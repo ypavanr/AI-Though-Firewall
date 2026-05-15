@@ -10,5 +10,5 @@ async def analyze_endpoint(request: AnalyzeRequest):
     Main entry point for text analysis.
     Calls the orchestrator to coordinate all agents.
     """
-    result = run_orchestration(request.text)
+    result = await run_orchestration(request.text)
     return result

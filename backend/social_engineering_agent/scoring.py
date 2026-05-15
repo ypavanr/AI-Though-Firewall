@@ -19,10 +19,17 @@ def calculate_social_engineering_scores(phishing_result, spam_result):
             spam_score = 0.0
             spam_label = "none"
 
-        # Special casing if needed: "LABEL_0" or "LABEL_1" logic depending on the exact model output
-        # But we use the raw score the model provided, assuming it's probability of the detected label.
-        
-        final_risk_score = (phishing_score * 0.6) + (spam_score * 0.4)
+        if phishing_label != "phishing":
+            phishing_risk_contribution = 0.0
+        else:
+            phishing_risk_contribution = phishing_score * 0.6
+            
+        if spam_label != "LABEL_1":  # LABEL_1 is spam, LABEL_0 is ham
+            spam_risk_contribution = 0.0
+        else:
+            spam_risk_contribution = spam_score * 0.4
+            
+        final_risk_score = phishing_risk_contribution + spam_risk_contribution
 
         return {
             "phishing_label": phishing_label,

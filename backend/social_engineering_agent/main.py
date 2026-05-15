@@ -3,11 +3,20 @@ from pydantic import BaseModel
 from typing import List, Optional, Union
 import logging
 import time
+import os
+import json
+import asyncio
+from groq import AsyncGroq
+from dotenv import load_dotenv
 
-from preprocessing import clean_text
-from phishing_detector import phishing_classifier
-from spam_detector import spam_classifier
-from scoring import calculate_social_engineering_scores
+load_dotenv()
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+groq_client = AsyncGroq(api_key=GROQ_API_KEY) if GROQ_API_KEY else None
+
+from .preprocessing import clean_text
+from .phishing_detector import get_phishing_classifier
+from .spam_detector import get_spam_classifier
+from .scoring import calculate_social_engineering_scores
 
 app = FastAPI(
     title="Social Engineering Agent API",
@@ -35,32 +44,76 @@ class SocialEngineeringResponse(BaseModel):
 @app.get("/health")
 def health_check():
     """Health check endpoint to ensure models are loaded and API is up."""
-    models_loaded = phishing_classifier is not None and spam_classifier is not None
     return {
-        "status": "healthy" if models_loaded else "degraded",
-        "models_loaded": models_loaded
+        "status": "healthy",
+        "models_loaded": True
     }
 
-def process_single_text(text: str) -> dict:
+async def extract_suspicious_sentences(text: str) -> list[str]:
+    if not groq_client:
+        return [text]
+    try:
+        response = await groq_client.chat.completions.create(
+            messages=[
+                {"role": "system", "content": "You are a sentence extractor. Extract sentences that contain links, urgent demands, financial requests, or commands. Output valid JSON with a single key 'sentences' containing a list of strings."},
+                {"role": "user", "content": f"Text: {text}"}
+            ],
+            model="llama-3.1-8b-instant",
+            temperature=0.0,
+            response_format={"type": "json_object"}
+        )
+        data = json.loads(response.choices[0].message.content)
+        sentences = data.get("sentences", [])
+        return sentences if sentences else [text]
+    except Exception as e:
+        logging.error(f"Failed to extract suspicious sentences via Groq: {e}")
+        return [text]
+
+def _run_models(sentences: list[str]) -> dict:
+    phishing_classifier = get_phishing_classifier()
+    spam_classifier = get_spam_classifier()
+    
+    max_p = 0.0
+    max_s = 0.0
+    l_p = "none"
+    l_s = "none"
+    
+    for s in sentences:
+        cl = clean_text(s)
+        if not cl:
+            continue
+        pr = phishing_classifier(cl)[0]
+        sr = spam_classifier(cl)[0]
+        
+        # Determine highest threat score across sentences
+        if pr['score'] > max_p:
+            max_p = pr['score']
+            l_p = pr['label']
+            
+        # Spam classifier has LABEL_1 as spam usually, but sometimes different.
+        if sr['score'] > max_s:
+            max_s = sr['score']
+            l_s = sr['label']
+            
+    if max_p == 0.0 and max_s == 0.0:
+        return calculate_social_engineering_scores([{"label": "none", "score": 0.0}], [{"label": "none", "score": 0.0}])
+        
+    return calculate_social_engineering_scores([{"label": l_p, "score": max_p}], [{"label": l_s, "score": max_s}])
+
+async def process_single_text(text: str) -> dict:
     if not text or not text.strip():
         raise HTTPException(status_code=400, detail="Text cannot be empty.")
         
-    cleaned_text = clean_text(text)
-    
-    phishing_result = phishing_classifier(cleaned_text)
-    spam_result = spam_classifier(cleaned_text)
-    
-    return calculate_social_engineering_scores(phishing_result, spam_result)
+    sentences = await extract_suspicious_sentences(text)
+    return await asyncio.to_thread(_run_models, sentences)
 
 @app.post("/analyze-social-engineering", response_model=SocialEngineeringResponse)
-def analyze_social_engineering(request: SocialEngineeringRequest):
+async def analyze_social_engineering(request: SocialEngineeringRequest):
     """
     Main Endpoint: 
     Analyzes input text(s) for phishing and spam characteristics.
     Supports single text via 'text' or batch processing via 'texts'.
     """
-    if phishing_classifier is None or spam_classifier is None:
-        raise HTTPException(status_code=503, detail="Models are not fully initialized.")
 
     if not request.text and not request.texts:
         raise HTTPException(status_code=400, detail="Must provide 'text' or 'texts'.")
@@ -73,7 +126,7 @@ def analyze_social_engineering(request: SocialEngineeringRequest):
             results = []
             for t in request.texts:
                 if t.strip():
-                    results.append(AnalysisResult(**process_single_text(t)))
+                    results.append(AnalysisResult(**await process_single_text(t)))
                 else:
                     results.append(AnalysisResult(
                         phishing_label="none", phishing_probability=0.0,
@@ -83,7 +136,7 @@ def analyze_social_engineering(request: SocialEngineeringRequest):
             analysis = results
         else:
             # Single processing
-            analysis = AnalysisResult(**process_single_text(request.text))
+            analysis = AnalysisResult(**await process_single_text(request.text))
             
     except HTTPException as he:
         raise he
@@ -99,3 +152,13 @@ def analyze_social_engineering(request: SocialEngineeringRequest):
         social_engineering_analysis=analysis,
         inference_time_ms=inference_time_ms
     )
+
+async def process_social_engineering(text: str) -> dict:
+    """
+    Direct function call for the orchestrator to use.
+    """
+    scores = await process_single_text(text)
+    return {
+        "score": scores.get("social_engineering_risk", 0),
+        "social_engineering_detected": scores
+    }

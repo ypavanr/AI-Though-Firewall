@@ -15,3 +15,5 @@ class AnalyzeResponse(BaseModel):
     radarData: List[int]
     detectedTechniques: List[str]
     highlights: List[Highlight]
+    aiDetection: dict
+    misinformation: dict
