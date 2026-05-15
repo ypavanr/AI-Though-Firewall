@@ -3,9 +3,9 @@ from pydantic import BaseModel
 import logging
 
 # Import modules from the current package
-from preprocessing import clean_text
-from classifier import emotion_classifier
-from scoring import calculate_emotion_scores
+from .preprocessing import clean_text
+from .classifier import emotion_classifier
+from .scoring import calculate_emotion_scores
 
 app = FastAPI(
     title="Emotion Agent API",
