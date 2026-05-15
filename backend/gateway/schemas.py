@@ -19,3 +19,4 @@ class AnalyzeResponse(BaseModel):
     misinformation: dict
     flags: Optional[List[Any]] = None
     aiSummary: Optional[str] = None
+    reportId: Optional[str] = None

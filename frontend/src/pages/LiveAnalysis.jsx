@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSignals } from '@preact/signals-react/runtime';
 import { UploadCloud, Search, ShieldAlert, Cpu, ChevronRight, AlertTriangle, CheckCircle, Activity } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -11,11 +11,19 @@ import { ScanningCore3D } from '../shared/components/ScanningCore3D';
 import { FactCheckHologram } from '../shared/components/FactCheckHologram';
 import { EmotionFace3D } from '../shared/components/EmotionFace3D';
 import { currentAnalysisState, currentAnalysisProgress, analysisLogs, analysisResults, factCheckResults } from '../state/appState';
-import { simulateAnalysis } from '../services/MockStreamService';
+import { simulateAnalysis, loadCachedAnalysis } from '../services/MockStreamService';
 
 export default function LiveAnalysis() {
   useSignals();
   const [inputText, setInputText] = useState('');
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const reportId = params.get('reportId');
+    if (reportId) {
+      loadCachedAnalysis(reportId);
+    }
+  }, []);
 
   const handleAnalyze = () => {
     if (!inputText.trim()) return;

@@ -34,6 +34,18 @@ function injectAnalysisButtons() {
                 });
                 const data = await res.json();
                 renderExtensionOverlay(post, data);
+                
+                if (data.reportId && !btnContainer.querySelector('.ext-detailed-btn')) {
+                    const detailedBtn = document.createElement('button');
+                    detailedBtn.className = 'ext-detailed-btn ext-analyze-btn';
+                    detailedBtn.style.marginLeft = '10px';
+                    detailedBtn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+                    detailedBtn.innerHTML = '📊 View Detailed Report';
+                    detailedBtn.onclick = () => {
+                        window.open(`http://localhost:5173/analysis?reportId=${data.reportId}`, '_blank');
+                    };
+                    btnContainer.appendChild(detailedBtn);
+                }
             } catch (err) {
                 alert("Extension failed to contact backend. Is port 8000 running?");
             }

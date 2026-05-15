@@ -5,7 +5,7 @@ from groq import AsyncGroq
 from dotenv import load_dotenv
 
 load_dotenv()
-GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+GROQ_API_KEY = os.getenv("GROQ_API_KEY_GATEWAY")
 groq_client = AsyncGroq(api_key=GROQ_API_KEY) if GROQ_API_KEY else None
 
 async def generate_groq_summary(flags: list) -> str:

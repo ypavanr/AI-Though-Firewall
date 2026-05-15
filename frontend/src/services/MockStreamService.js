@@ -112,3 +112,27 @@ export async function simulateAnalysis(text) {
     }
   }, totalDelay + 500);
 }
+
+export async function loadCachedAnalysis(reportId) {
+  currentAnalysisState.value = 'scanning';
+  currentAnalysisProgress.value = 100;
+  
+  addLog(`FETCHING CACHED REPORT [${reportId}]...`, "warning");
+  
+  try {
+    const res = await fetch(`http://localhost:8000/api/analyze/${reportId}`);
+    if (res.ok) {
+      const data = await res.json();
+      analysisResults.value = data;
+      factCheckResults.value = data.misinformation?.claims || [];
+      addLog("CACHE RETRIEVED SUCCESSFULLY.", "success");
+      currentAnalysisState.value = 'complete';
+    } else {
+      addLog("REPORT NOT FOUND OR EXPIRED.", "error");
+      currentAnalysisState.value = 'idle';
+    }
+  } catch (err) {
+    addLog("FAILED TO CONNECT TO BACKEND.", "error");
+    currentAnalysisState.value = 'idle';
+  }
+}
