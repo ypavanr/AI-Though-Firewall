@@ -142,17 +142,6 @@ function App() {
               <div className="post-time">{post.time} • {post.type.toUpperCase()}</div>
             </div>
           </div>
-          <button 
-            className="analyze-btn"
-            onClick={() => analyzeContent(post.id, post.content)}
-            disabled={isAnalyzing}
-          >
-            {isAnalyzing ? (
-              <><Loader2 size={16} className="spinner" /> Analyzing...</>
-            ) : (
-              <><ShieldAlert size={16} /> Analyze Threat</>
-            )}
-          </button>
         </div>
 
         {post.subject && <div className="post-subject">{post.subject}</div>}

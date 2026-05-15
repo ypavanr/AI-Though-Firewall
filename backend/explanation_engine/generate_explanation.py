@@ -9,14 +9,23 @@ def build_techniques(emotion_data: dict, social_data: dict) -> List[str]:
     Generate why content is dangerous and what tactics were used.
     """
     techniques = []
+    
+    # 1. Emotions
     emotions = emotion_data.get("emotions_detected", {})
-    if emotions.get("fear", 0) > 0.5:
-        techniques.append("Fear Amplification")
-    if emotions.get("urgency", 0) > 0.5:
-        techniques.append("False Urgency")
+    manipulation_score = emotions.get("manipulation_score", 0)
+    top_1 = emotions.get("top_emotion_1")
+    top_2 = emotions.get("top_emotion_2")
+    
+    if manipulation_score > 10:
+        if top_1: techniques.append(top_1.capitalize())
+        if top_2: techniques.append(top_2.capitalize())
         
-    if social_data.get("phishing_risk", 0) > 0.5:
-        techniques.append("Credential Harvesting")
+    # 2. Social Engineering
+    soc_detected = social_data.get("social_engineering_detected", {})
+    if soc_detected.get("phishing_probability", 0) > 50:
+        techniques.append("Phishing Intent")
+    if soc_detected.get("spam_probability", 0) > 50:
+        techniques.append("Spam/Scam Tactics")
         
     if not techniques:
         techniques.append("No clear manipulation detected")

@@ -53,12 +53,14 @@ export function FactCheckHologram({ ratingText }) {
   }
 
   return (
-    <div className="w-full h-full min-h-[150px] relative rounded-xl overflow-hidden bg-transparent">
-      <Canvas camera={{ position: [0, 0, 3] }}>
-        <ambientLight intensity={0.5} />
-        <pointLight position={[10, 10, 10]} intensity={1} />
-        <HologramShape isFake={isFake} isNeutral={isNeutral} />
-      </Canvas>
+    <div className="w-full h-[300px] relative rounded-xl overflow-hidden bg-transparent">
+      <div className="absolute inset-0">
+        <Canvas camera={{ position: [0, 0, 3] }}>
+          <ambientLight intensity={0.5} />
+          <pointLight position={[10, 10, 10]} intensity={1} />
+          <HologramShape isFake={isFake} isNeutral={isNeutral} />
+        </Canvas>
+      </div>
     </div>
   );
 }
