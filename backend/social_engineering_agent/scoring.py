@@ -21,21 +21,25 @@ def calculate_social_engineering_scores(phishing_result, spam_result):
 
         if phishing_label != "phishing":
             phishing_risk_contribution = 0.0
+            phishing_prob_output = 0.0
         else:
             phishing_risk_contribution = phishing_score * 0.6
+            phishing_prob_output = phishing_score
             
         if spam_label != "LABEL_1":  # LABEL_1 is spam, LABEL_0 is ham
             spam_risk_contribution = 0.0
+            spam_prob_output = 0.0
         else:
             spam_risk_contribution = spam_score * 0.4
+            spam_prob_output = spam_score
             
         final_risk_score = phishing_risk_contribution + spam_risk_contribution
 
         return {
             "phishing_label": phishing_label,
-            "phishing_probability": round(phishing_score * 100, 2),
+            "phishing_probability": round(phishing_prob_output * 100, 2),
             "spam_label": spam_label,
-            "spam_probability": round(spam_score * 100, 2),
+            "spam_probability": round(spam_prob_output * 100, 2),
             "social_engineering_risk": round(final_risk_score * 100, 2)
         }
     except Exception as e:

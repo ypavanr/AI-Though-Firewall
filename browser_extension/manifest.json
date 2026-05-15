@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "AI Thought Firewall Extension",
+  "version": "1.0",
+  "description": "Analyzes social media posts and emails on the fly using the AI Thought Firewall Backend.",
+  "permissions": [
+    "activeTab",
+    "scripting"
+  ],
+  "host_permissions": [
+    "http://localhost:3000/*",
+    "http://localhost:8000/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["http://localhost:3000/*"],
+      "css": ["styles.css"],
+      "js": ["content.js"]
+    }
+  ]
+}

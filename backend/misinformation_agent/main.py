@@ -26,7 +26,7 @@ async def extract_claims(text: str) -> list[str]:
         response = await groq_client.chat.completions.create(
             messages=[
                 {"role": "system", "content": "You are a factual claim extractor. You must output valid JSON with a single key 'claims' containing a list of string claims."},
-                {"role": "user", "content": f"Extract distinct, specific factual claims from the following text that can be fact-checked. Exclude opinions, emotions, or generic sentences.\n\nText: {text}"}
+                {"role": "user", "content": f"Extract distinct, specific factual claims, conspiracy theories, or assertions from the following text that can be fact-checked. If a question implies a factual claim (e.g., 'Is the earth flat?'), extract the underlying claim ('The earth is flat'). Simplify the claims so they are easily searchable in a fact-checking database. Exclude subjective emotions or generic conversational text.\n\nText: {text}"}
             ],
             model="llama-3.1-8b-instant",
             temperature=0.0,

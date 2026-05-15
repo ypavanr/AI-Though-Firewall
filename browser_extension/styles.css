@@ -1,0 +1,119 @@
+/* Extension Specific Styling injected into the page */
+
+.ext-btn-container {
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.ext-analyze-btn {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+    font-size: 14px;
+}
+
+.ext-analyze-btn:hover {
+    transform: translateY(-2px);
+}
+
+.ext-analyze-btn:disabled {
+    background: #475569;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.ext-overlay {
+    background-color: #1e293b;
+    border: 2px solid #8b5cf6;
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 15px;
+    color: #f8fafc;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    font-family: system-ui, -apple-system, sans-serif;
+    animation: extFadeIn 0.3s ease-out;
+}
+
+@keyframes extFadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.ext-overlay-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #334155;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+.ext-overlay-header h3 {
+    margin: 0;
+    font-size: 18px;
+    color: #a78bfa;
+}
+
+.ext-score {
+    background-color: #ef4444;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.ext-summary {
+    background-color: rgba(139, 92, 246, 0.1);
+    padding: 12px;
+    border-radius: 8px;
+    border-left: 4px solid #8b5cf6;
+    margin-bottom: 15px;
+}
+
+.ext-summary p {
+    margin: 5px 0 0 0;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.ext-flags-container h4 {
+    margin: 0 0 10px 0;
+    color: #94a3b8;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+}
+
+.ext-flag {
+    background-color: rgba(0,0,0,0.2);
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 8px;
+}
+
+.ext-flag strong {
+    color: #ef4444;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.ext-flag p {
+    margin: 0;
+    font-size: 13px;
+    color: #cbd5e1;
+}
+
+.ext-flag.safe {
+    background-color: rgba(16, 185, 129, 0.1);
+}
+
+.ext-flag.safe strong {
+    color: #10b981;
+}

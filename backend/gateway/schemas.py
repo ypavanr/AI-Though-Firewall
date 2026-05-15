@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional, Any
 
 class AnalyzeRequest(BaseModel):
     text: str
@@ -17,3 +17,5 @@ class AnalyzeResponse(BaseModel):
     highlights: List[Highlight]
     aiDetection: dict
     misinformation: dict
+    flags: Optional[List[Any]] = None
+    aiSummary: Optional[str] = None
