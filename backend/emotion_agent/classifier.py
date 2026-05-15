@@ -1,12 +1,21 @@
-def detect_emotions(text: str) -> dict:
-    # Stub: simulated logic
-    emotions = {"fear": 0.0, "anger": 0.0, "urgency": 0.0}
-    text_lower = text.lower()
-    
-    if "urgent" in text_lower or "immediately" in text_lower:
-        emotions["urgency"] = 0.9
-        emotions["fear"] = 0.7
-    if "deleted" in text_lower or "suspended" in text_lower:
-        emotions["fear"] = 0.85
-        
-    return emotions
+import logging
+from dotenv import load_dotenv
+from transformers import pipeline
+
+load_dotenv()
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+logger.info("Initializing Hugging Face Emotion Classifier globally...")
+try:
+    # Initialize the emotion classifier globally so it doesn't reload on each request
+    emotion_classifier = pipeline(
+        "text-classification",
+        model="SamLowe/roberta-base-go_emotions",
+        top_k=None
+    )
+    logger.info("Hugging Face Emotion Classifier initialized successfully.")
+except Exception as e:
+    logger.error(f"Failed to initialize Hugging Face Emotion Classifier: {e}")
+    emotion_classifier = None
