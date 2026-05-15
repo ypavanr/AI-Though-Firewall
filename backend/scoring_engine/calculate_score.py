@@ -65,14 +65,14 @@ def calculate_final_risk(emotion_data: dict, social_data: dict, ai_data: dict, m
     else:
         severity = "low"
         
-    # Radar Data: [Phishing, Manipulation, Spam, AI, Misinfo, Anger]
+    # Radar Data: [Fear, Manipulation, Spam, Rage, Misinfo, Phishing]
     radar_data = [
-        int(phishing_prob),
+        int(emo_detected.get("fear_score", 0)),
         int(manipulation_score),
         int(spam_prob),
-        int(ai_prob),
+        int(emo_detected.get("anger_score", 0)),
         int(min(len(claims) * 25, 100)),
-        int(emo_detected.get("anger_score", 0))
+        int(phishing_prob)
     ]
     
     return final_score, severity, radar_data, flags

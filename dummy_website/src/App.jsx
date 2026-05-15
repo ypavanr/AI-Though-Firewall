@@ -21,9 +21,14 @@ function App() {
   const [activeTab, setActiveTab] = useState('all');
   const [analyzingIds, setAnalyzingIds] = useState(new Set());
   const [analysisResults, setAnalysisResults] = useState({});
+  const [hiddenAds, setHiddenAds] = useState(new Set());
+
+  const hideAd = (id) => {
+    setHiddenAds(prev => new Set(prev).add(id));
+  };
 
   const filteredPosts = dummyPosts.filter(post => 
-    activeTab === 'all' ? true : post.type === activeTab
+    (activeTab === 'all' || post.type === activeTab) && !hiddenAds.has(post.id)
   );
 
   const analyzeContent = async (id, text) => {
@@ -131,9 +136,10 @@ function App() {
   const renderCard = (post) => {
     const isAnalyzing = analyzingIds.has(post.id);
     const hasResult = !!analysisResults[post.id];
+    const isAd = post.type === 'ad';
 
     return (
-      <div key={post.id} className="card">
+      <div key={post.id} className={`card ${isAd ? 'ad-card' : ''}`}>
         <div className="card-header">
           <div className="author-info">
             <img src={post.avatar} alt={post.author} className="avatar" />
@@ -142,14 +148,23 @@ function App() {
               <div className="post-time">{post.time} • {post.type.toUpperCase()}</div>
             </div>
           </div>
+          {isAd && (
+            <button className="close-ad-btn" onClick={() => hideAd(post.id)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '1.2rem' }}>✕</button>
+          )}
         </div>
 
         {post.subject && <div className="post-subject">{post.subject}</div>}
         {post.title && <div className="post-title">{post.title}</div>}
         
-        <div className="post-content">
+        <div className="post-content" style={isAd ? { position: 'absolute', width: '1px', height: '1px', overflow: 'hidden', clip: 'rect(0 0 0 0)' } : {}}>
           {post.content}
         </div>
+
+        {isAd && post.image && (
+          <a href={post.link} target="_blank" rel="noreferrer" className="ad-image-container" style={{ display: 'block', margin: '0.5rem 0 1.5rem 0' }}>
+            <img src={`/src/assets/${post.image}`} alt="Advertisement" style={{ width: '100%', borderRadius: '0.5rem', cursor: 'pointer', border: '1px solid var(--border)' }} />
+          </a>
+        )}
 
         {hasResult && renderAnalysis(analysisResults[post.id])}
 
@@ -169,6 +184,9 @@ function App() {
       </div>
     );
   };
+
+  const regularPosts = filteredPosts.filter(p => p.type !== 'ad');
+  const activeAds = dummyPosts.filter(p => p.type === 'ad' && !hiddenAds.has(p.id));
 
   return (
     <div className="app-container">
@@ -215,8 +233,13 @@ function App() {
         </div>
 
         <div className="feed">
-          {filteredPosts.map(renderCard)}
+          {regularPosts.map(renderCard)}
         </div>
+      </div>
+
+      <div className="right-sidebar">
+        <div className="right-sidebar-title">Sponsored</div>
+        {activeAds.map(renderCard)}
       </div>
     </div>
   );

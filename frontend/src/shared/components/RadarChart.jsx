@@ -10,8 +10,8 @@ export function RadarChart({ data }) {
       radar: {
         indicator: [
           { name: 'Fear Amplification', max: 100 },
-          { name: 'Urgency', max: 100 },
-          { name: 'Bias Framing', max: 100 },
+          { name: 'Emotional Manipulation', max: 100 },
+          { name: 'Spam / Scams', max: 100 },
           { name: 'Rage Bait', max: 100 },
           { name: 'Misinformation', max: 100 },
           { name: 'Phishing Intent', max: 100 }

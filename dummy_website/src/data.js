@@ -68,5 +68,35 @@ export const dummyPosts = [
     content: "The implications of artificial intelligence on modern society are vast and multifaceted. As algorithms become increasingly sophisticated, the paradigm shifts toward automation, thereby necessitating a reevaluation of traditional workforce structures and economic models.",
     likes: 5,
     comments: 0
+  },
+  {
+    id: 8,
+    type: "ad",
+    author: "Sponsored - Tech Security",
+    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sponsored1",
+    time: "Promoted",
+    content: "WARNING! Your computer might be infected! Click here immediately to download our free Antivirus tool and clean your system before you lose all your files! Time is running out! http://malicious-cleaner.com",
+    image: "image.png",
+    link: "http://malicious-cleaner.com"
+  },
+  {
+    id: 9,
+    type: "ad",
+    author: "Sponsored - Health & Wellness",
+    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sponsored2",
+    time: "Promoted",
+    content: "SHOCKING TRUTH REVEALED: Famous celebrity admits to using this weird trick to lose 50 pounds in one week! Doctors are furious! Click here to claim your free trial bottle now: http://fake-diet-pills.net",
+    image: "image copy.png",
+    link: "http://fake-diet-pills.net"
+  },
+  {
+    id: 10,
+    type: "ad",
+    author: "Sponsored - Nike Official",
+    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Nike",
+    time: "Promoted",
+    content: "Shop the new summer collection at Nike! Find the perfect pair of running shoes designed for ultimate comfort and performance. Free shipping on all orders over $50. Visit our official store today. https://www.nike.com",
+    image: "image copy 2.png",
+    link: "https://www.nike.com"
   }
 ];

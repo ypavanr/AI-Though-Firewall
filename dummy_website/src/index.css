@@ -1,18 +1,18 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 :root {
-  --bg-dark: #0f172a;
-  --bg-panel: #1e293b;
-  --bg-hover: #334155;
-  --text-main: #f8fafc;
-  --text-muted: #94a3b8;
-  --accent: #3b82f6;
-  --accent-hover: #2563eb;
-  --border: #334155;
+  --bg-dark: #ffffff;
+  --bg-panel: #ffffff;
+  --bg-hover: #f7f9f9;
+  --text-main: #0f1419;
+  --text-muted: #536471;
+  --accent: #1d9bf0;
+  --accent-hover: #1a8cd8;
+  --border: #eff3f4;
   
-  --risk-high: #ef4444;
-  --risk-med: #f59e0b;
-  --risk-low: #10b981;
+  --risk-high: #f4212e;
+  --risk-med: #ff9800;
+  --risk-low: #00ba7c;
 }
 
 * {
@@ -83,7 +83,27 @@ body {
   flex: 1;
   padding: 2rem;
   max-width: 800px;
-  margin: 0 auto;
+  /* Remove margin: 0 auto so it aligns properly with sidebars */
+}
+
+/* Right Sidebar for Ads */
+.right-sidebar {
+  width: 350px;
+  padding: 2rem 1rem;
+  border-left: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  background-color: var(--bg-dark);
+}
+
+.right-sidebar-title {
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
 }
 
 .header {
