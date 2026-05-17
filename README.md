@@ -8,6 +8,29 @@ Unlike traditional antivirus systems that protect machines, THOUGHTFW protects *
 
 ---
 
+# 🎥 Demo Videos
+
+## 🚨 Threat Detection Demo
+Shows THOUGHTFW detecting phishing, manipulation, and misinformation in real time.
+
+https://github.com/user-attachments/assets/9fee33de-e6d2-4ce1-b7ec-4b6f54b2c589
+
+---
+
+## 📢 Advertisement Manipulation Demo
+Demonstrates emotional persuasion and advertising manipulation analysis.
+
+https://github.com/user-attachments/assets/7aa6bf47-7719-4d83-8ed3-83d55c874935
+
+---
+
+## ℹ️ Normal Content Analysis Demo
+Example of benign/safe content receiving low-risk classification.
+
+https://github.com/user-attachments/assets/3897ec2f-1816-4a88-8e30-cf62edbd7ad2
+
+---
+
 # 🌐 What is Nexus?
 
 **Nexus** is the social-media intelligence ecosystem powering THOUGHTFW.
