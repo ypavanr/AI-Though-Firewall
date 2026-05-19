@@ -435,7 +435,7 @@ This eliminates unnecessary loading states.
 ## Clone Repository
 
 ```bash
-git clone https://github.com/yourusername/thoughtfw.git
+git clone https://github.com/ypavanr/AI-Though-Firewall.git
 
 cd thoughtfw
 ```
@@ -449,7 +449,7 @@ cd backend
 
 pip install -r requirements.txt
 
-uvicorn main:app --reload
+python main.py
 ```
 
 ---
@@ -462,6 +462,18 @@ cd frontend
 npm install
 
 npm run dev
+```
+
+---
+
+# 🌐 Dummy Webiste Setup
+
+```bash
+cd dummy_website
+
+npm install
+
+npm run dev -- --port 3000
 ```
 
 ---
